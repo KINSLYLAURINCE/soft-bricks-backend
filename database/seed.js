@@ -7,14 +7,16 @@ const { sendEmail } = require('../utils/mailer');
 async function seed() {
   const client = await pool.connect();
   try {
-    console.log('Seeding admin user only...');
+    console.log('========================================');
+    console.log('SOFTBRICKSAI DATABASE SEEDING');
+    console.log('========================================');
 
     const exists = await client.query('SELECT id FROM admin_users WHERE email = $1', [process.env.ADMIN_EMAIL]);
     let adminId;
     
     if (exists.rows.length > 0) {
       adminId = exists.rows[0].id;
-      console.log('Admin already exists, skipping.');
+      console.log('ℹ️  Admin already exists, skipping.');
     } else {
       adminId = uuidv4();
       const hash = await bcrypt.hash(process.env.ADMIN_PASSWORD, 12);
@@ -23,7 +25,7 @@ async function seed() {
          VALUES ($1, $2, $3, $4, 'super_admin')`,
         [adminId, process.env.ADMIN_EMAIL, hash, process.env.ADMIN_USERNAME]
       );
-      console.log(`Admin user created: ${process.env.ADMIN_EMAIL}`);
+      console.log(`✅ Admin user created: ${process.env.ADMIN_EMAIL}`);
       
       try {
         await sendEmail({
@@ -45,16 +47,22 @@ async function seed() {
           `,
           text: `Welcome to SoftBricksAI Admin\n\nYour admin account has been created.\n\nLogin Email: ${process.env.ADMIN_EMAIL}\nPassword: ${process.env.ADMIN_PASSWORD}\nLogin URL: ${process.env.CLIENT_URL}/admin-login\n\nPlease change your password after first login.`
         });
-        console.log('Admin credentials sent via email');
+        console.log('📧 Admin credentials sent via email');
       } catch (emailErr) {
-        console.log('Email not sent:', emailErr.message);
-        console.log(`Admin credentials - Email: ${process.env.ADMIN_EMAIL}, Password: ${process.env.ADMIN_PASSWORD}`);
+        console.log('⚠️  Email not sent:', emailErr.message);
+        console.log(`📋 Admin credentials - Email: ${process.env.ADMIN_EMAIL}, Password: ${process.env.ADMIN_PASSWORD}`);
       }
     }
 
-    console.log('Admin seeding complete');
+    console.log('\n========================================');
+    console.log('✅ SEEDING COMPLETED SUCCESSFULLY');
+    console.log('========================================');
+    console.log(`👤 Admin Email: ${process.env.ADMIN_EMAIL}`);
+    console.log(`🔑 Admin Password: ${process.env.ADMIN_PASSWORD}`);
+    console.log(`🔗 Admin Login URL: ${process.env.CLIENT_URL}/admin-login`);
+    console.log('========================================\n');
   } catch (err) {
-    console.error('Seeding failed:', err.message);
+    console.error('❌ Seeding failed:', err.message);
     process.exit(1);
   } finally {
     client.release();
