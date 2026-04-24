@@ -1,0 +1,48 @@
+services:
+  - type: web
+    name: soft-bricks-backend
+    runtime: node
+    repo: https://github.com/KINSLYLAURINCE/soft-bricks-backend
+    plan: free
+    branch: main
+    autoDeploy: true
+    region: virginia
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: PORT
+        value: 5000
+      - key: NODE_VERSION
+        value: 20.18.0
+      - key: DB_HOST
+        value: dpg-d7loo58sfn5c738gs000-a.virginia-postgres.render.com
+      - key: DB_PORT
+        value: 5432
+      - key: DB_NAME
+        value: soft_bricks
+      - key: DB_USER
+        value: soft_bricks_user
+      - key: DB_PASSWORD
+        value: XncOiCnUD9oyhl6jxjEJajCiaugONpf8
+      - key: JWT_SECRET
+        value: my_super_secret_key_12345_changed_for_production
+      - key: JWT_EXPIRES_IN
+        value: 24h
+      - key: ADMIN_EMAIL
+        value: kingslydebruyne17@gmail.com
+      - key: ADMIN_PASSWORD
+        value: Admin123
+      - key: ADMIN_USERNAME
+        value: admin
+      - key: SMTP_HOST
+        value: smtp.gmail.com
+      - key: SMTP_PORT
+        value: 587
+      - key: SMTP_USER
+        value: kingslydebruyne17@gmail.com
+      - key: SMTP_PASSWORD
+        value: hiclionugsdurwui
+      - key: EMAIL_FROM
+        value: kingslydebruyne17@gmail.com
+      - key: CLIENT_URL
+        value: https://brick-builder-lilac.vercel.app
