@@ -12,7 +12,7 @@ yarn.lock
 .env.*.local
 
 # Database
-*.sql
+# *.sql
 *.db
 *.db-journal
 database/*.sqlite
