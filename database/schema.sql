@@ -236,11 +236,12 @@ CREATE TABLE IF NOT EXISTS visitors (
   visited_at   TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
--- 13. PAGE VIEWS
+-- 13. PAGE VIEWS (with referrer column)
 CREATE TABLE IF NOT EXISTS page_views (
   id           UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   visitor_id   UUID REFERENCES visitors(id) ON DELETE SET NULL,
   page_path    VARCHAR(500) NOT NULL,
+  referrer     VARCHAR(500),
   time_on_page INT DEFAULT 0,
   bounced      BOOLEAN DEFAULT FALSE,
   viewed_at    TIMESTAMPTZ NOT NULL DEFAULT NOW()
@@ -369,7 +370,7 @@ CREATE TABLE IF NOT EXISTS activity_log (
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
--- Click Events Table
+-- 22. CLICK EVENTS
 CREATE TABLE IF NOT EXISTS click_events (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   visitor_id UUID REFERENCES visitors(id) ON DELETE SET NULL,
@@ -379,10 +380,6 @@ CREATE TABLE IF NOT EXISTS click_events (
   page_path VARCHAR(500),
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
-
-CREATE INDEX IF NOT EXISTS idx_click_events_visitor ON click_events(visitor_id);
-CREATE INDEX IF NOT EXISTS idx_click_events_page ON click_events(page_path);
-CREATE INDEX IF NOT EXISTS idx_click_events_created ON click_events(created_at);
 
 -- INDEXES
 CREATE INDEX IF NOT EXISTS idx_blog_posts_status    ON blog_posts(status);
@@ -396,3 +393,6 @@ CREATE INDEX IF NOT EXISTS idx_crm_contacts_status  ON crm_contacts(status);
 CREATE INDEX IF NOT EXISTS idx_billing_status       ON billing(status);
 CREATE INDEX IF NOT EXISTS idx_support_status       ON support_tickets(status);
 CREATE INDEX IF NOT EXISTS idx_activity_admin       ON activity_log(admin_id);
+CREATE INDEX IF NOT EXISTS idx_click_events_visitor ON click_events(visitor_id);
+CREATE INDEX IF NOT EXISTS idx_click_events_page    ON click_events(page_path);
+CREATE INDEX IF NOT EXISTS idx_click_events_created ON click_events(created_at);
